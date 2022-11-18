@@ -25,11 +25,11 @@ const BookingModal = ({ treatment, setTreatment, selectedDate }) => {
       phone,
     };
 
-    console.log(name, patientName, email, slot, phone, date);
-    console.log(booking);
+    // console.log(name, patientName, email, slot, phone, date);
+    // console.log(booking);
 
-    // fetch(`http://localhost:5000/bookings`, {
-    fetch(`https://doctors-portal-server-sigma.vercel.app/bookings`, {
+    fetch(`http://localhost:5000/bookings`, {
+      // fetch(`https://doctors-portal-server-sigma.vercel.app/bookings`, {
       method: "POST",
       headers: {
         "content-type": "application/json",
@@ -38,7 +38,7 @@ const BookingModal = ({ treatment, setTreatment, selectedDate }) => {
     })
       .then((response) => response.json())
       .then((data) => {
-        console.log(data);
+        // console.log(data);
         if (data.acknowledged) {
           setTreatment(null);
           toast.success("Booking confirmed");

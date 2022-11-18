@@ -29,15 +29,27 @@ async function run() {
       .collection("bookings");
 
     app.get("/appointmentOptions", async (req, res) => {
+      const date = req.query.date;
       const query = {};
       const cursor = appointmentOptionsCollections.find(query);
       const result = await cursor.toArray();
+      const bookingQuery = { appointmentDate: date };
+      const alreadyBooked = await bookingsCollections
+        .find(bookingQuery)
+        .toArray();
+      result.forEach((option) => {
+        const optionBooked = alreadyBooked.filter(
+          (book) => book.treatment === option.name
+        );
+        const bookedSlots = optionBooked.map((book) => book.slot);
+        console.log(date, option.name, bookedSlots);
+      });
       res.send(result);
     });
 
     app.post("/bookings", async (req, res) => {
       const booking = req.body;
-      console.log(booking);
+      // console.log(booking);
       const result = await bookingsCollections.insertOne(booking);
       res.send(result);
     });

@@ -15,12 +15,12 @@ const SignUp = () => {
   const navigate = useNavigate();
 
   const handleSignUp = (data) => {
-    console.log(data);
+    // console.log(data);
     setSignUPError("");
     createUser(data.email, data.password)
       .then((result) => {
         const user = result.user;
-        console.log(user);
+        // console.log(user);
         toast(`User Created Successfully.`);
         const userInfo = {
           displayName: data.name,

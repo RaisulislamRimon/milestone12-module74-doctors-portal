@@ -17,16 +17,16 @@ const Login = () => {
   const from = location.state?.from?.pathname || "/";
 
   const handleLogin = (data) => {
-    console.log(data);
+    // console.log(data);
     setLoginError("");
     signIn(data.email, data.password)
       .then((result) => {
         const user = result.user;
-        console.log(user);
+        // console.log(user);
         navigate(from, { replace: true });
       })
       .catch((error) => {
-        console.log(error.message);
+        // console.log(error.message);
         setLoginError(error.message);
       });
   };

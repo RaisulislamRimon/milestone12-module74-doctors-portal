@@ -7,13 +7,17 @@ import BookingModal from "../BookingModal/BookingModal";
 const AvailableAppointments = ({ selectedDate, setSelectedDate }) => {
   // const [appointmentOptions, setAppointmentOptions] = React.useState([]);
   const [treatment, setTreatment] = React.useState(null);
+  const date = format(selectedDate, "PP");
 
   const { data: appointmentOptions = [] } = useQuery({
-    queryKey: [`appointmentOptions`],
+    queryKey: [`appointmentOptions`, date],
     queryFn: async () => {
       const response = await fetch(
-        `https://doctors-portal-server-sigma.vercel.app/appointmentOptions`
+        `http://localhost:5000/appointmentOptions?date=${date}`
       );
+      // const response = await fetch(
+      //   `https://doctors-portal-server-sigma.vercel.app/appointmentOptions?date=${date}`
+      // );
       const data = await response.json();
       return data;
     },

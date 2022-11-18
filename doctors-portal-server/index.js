@@ -10,9 +10,9 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-const uri = `mongodb://localhost:27017`;
+// const uri = `mongodb://localhost:27017`;
 
-// const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@cluster0.l74gydh.mongodb.net/?retryWrites=true&w=majority`;
+const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@cluster0.l74gydh.mongodb.net/?retryWrites=true&w=majority`;
 const client = new MongoClient(uri, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
@@ -24,11 +24,21 @@ async function run() {
     const appointmentOptionsCollections = client
       .db("doctorsPortal")
       .collection("appointmentOptions");
+    const bookingsCollections = client
+      .db("doctorsPortal")
+      .collection("bookings");
 
     app.get("/appointmentOptions", async (req, res) => {
       const query = {};
       const cursor = appointmentOptionsCollections.find(query);
       const result = await cursor.toArray();
+      res.send(result);
+    });
+
+    app.post("/bookings", async (req, res) => {
+      const booking = req.body;
+      console.log(booking);
+      const result = await bookingsCollections.insertOne(booking);
       res.send(result);
     });
   } finally {

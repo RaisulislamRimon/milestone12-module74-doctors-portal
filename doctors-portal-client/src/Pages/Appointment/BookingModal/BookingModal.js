@@ -1,9 +1,12 @@
 import { format } from "date-fns";
-import React from "react";
+import React, { useContext } from "react";
+import toast from "react-hot-toast";
+import { AuthContext } from "../../../contexts/AuthProvider";
 
 const BookingModal = ({ treatment, setTreatment, selectedDate }) => {
   const { name, slots } = treatment;
   const date = format(selectedDate, "PP");
+  const { user } = useContext(AuthContext);
 
   const handleBooking = (e) => {
     e.preventDefault();
@@ -24,7 +27,23 @@ const BookingModal = ({ treatment, setTreatment, selectedDate }) => {
 
     console.log(name, patientName, email, slot, phone, date);
     console.log(booking);
-    setTreatment(null);
+
+    // fetch(`http://localhost:5000/bookings`, {
+    fetch(`https://doctors-portal-server-sigma.vercel.app/bookings`, {
+      method: "POST",
+      headers: {
+        "content-type": "application/json",
+      },
+      body: JSON.stringify(booking),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(data);
+        if (data.acknowledged) {
+          setTreatment(null);
+          toast.success("Booking confirmed");
+        }
+      });
   };
 
   return (
@@ -57,12 +76,16 @@ const BookingModal = ({ treatment, setTreatment, selectedDate }) => {
               ))}
             </select>
             <input
+              defaultValue={user?.displayName}
+              disabled
               type="text"
               name="name"
               placeholder="Your Name"
               className="input w-full input-bordered "
             />
             <input
+              defaultValue={user?.email}
+              disabled
               type="email"
               name="email"
               placeholder="Email address"

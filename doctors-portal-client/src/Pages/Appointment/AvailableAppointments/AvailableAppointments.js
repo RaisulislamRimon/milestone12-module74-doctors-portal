@@ -9,6 +9,7 @@ const AvailableAppointments = ({ selectedDate, setSelectedDate }) => {
 
   React.useEffect(() => {
     fetch("https://doctors-portal-server-sigma.vercel.app/appointmentOptions")
+    // fetch("http://localhost:5000/appointmentOptions")
       .then((response) => response.json())
       .then((data) => {
         setAppointmentOptions(data);

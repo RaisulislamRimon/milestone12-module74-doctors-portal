@@ -51,6 +51,53 @@ async function run() {
       res.send(option);
     });
 
+    app.get("/v2/appointmentOptions", async (req, res) => {
+      const date = req.query.date;
+      const options = await appointmentOptionsCollections
+        .aggregate([
+          {
+            $lookup: {
+              from: "bookings",
+              localField: "name",
+              foreignField: "treatment",
+              pipeLine: [
+                {
+                  $match: {
+                    $expr: {
+                      $eq: ["$appointmentDate", date],
+                    },
+                  },
+                },
+                {
+                  $project: {
+                    name: 1,
+                    slots: 1,
+                    booked: {
+                      $map: {
+                        input: "$booked",
+                        as: "book",
+                        in: "$$book.slot",
+                      },
+                    },
+                  },
+                },
+                {
+                  $project: {
+                    name: 1,
+                    slots: {
+                      $setDifference: ["$slots", "$booked"],
+                    },
+                  },
+                },
+              ],
+              as: "booked",
+            },
+          },
+        ])
+        .toArray();
+      res.send(options);
+    });
+
     app.post("/bookings", async (req, res) => {
       const booking = req.body;
       // console.log(booking);

@@ -32,19 +32,23 @@ async function run() {
       const date = req.query.date;
       const query = {};
       const cursor = appointmentOptionsCollections.find(query);
-      const result = await cursor.toArray();
+      const option = await cursor.toArray();
       const bookingQuery = { appointmentDate: date };
       const alreadyBooked = await bookingsCollections
         .find(bookingQuery)
         .toArray();
-      result.forEach((option) => {
+      option.forEach((option) => {
         const optionBooked = alreadyBooked.filter(
           (book) => book.treatment === option.name
         );
         const bookedSlots = optionBooked.map((book) => book.slot);
-        console.log(date, option.name, bookedSlots);
+        const remainingSlots = option.slots.filter(
+          (slot) => !bookedSlots.includes(slot)
+        );
+        option.slots = remainingSlots;
+        // console.log(date, option.name, remainingSlots.length);
       });
-      res.send(result);
+      res.send(option);
     });
 
     app.post("/bookings", async (req, res) => {

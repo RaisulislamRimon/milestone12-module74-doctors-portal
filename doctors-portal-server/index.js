@@ -2,6 +2,7 @@ const express = require("express");
 const cors = require("cors");
 const port = process.env.PORT || 5000;
 const { MongoClient, ServerApiVersion } = require("mongodb");
+require("dotenv").config();
 
 const app = express();
 
@@ -17,11 +18,24 @@ const client = new MongoClient(uri, {
   useUnifiedTopology: true,
   serverApi: ServerApiVersion.v1,
 });
-client.connect((err) => {
-  const collection = client.db("test").collection("devices");
-  // perform actions on the collection object
-  client.close();
-});
+
+async function run() {
+  try {
+    const appointmentOptionsCollections = client
+      .db("doctorsPortal")
+      .collection("appointmentOptions");
+
+    app.get("/appointmentOptions", async (req, res) => {
+      const query = {};
+      const cursor = appointmentOptionsCollections.find(query);
+      const result = await cursor.toArray();
+      res.send(result);
+    });
+  } finally {
+    // await client.close();
+  }
+}
+run().catch(console.dir);
 
 app.get("/", async (req, res) => {
   res.send("Doctors portal server is running!");
